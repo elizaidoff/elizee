@@ -81,8 +81,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12m-4.5 9a2.25 2.25 0 01-2.25-2.25V15a3 3 0 00-3-3h-2.25a3 3 0 00-3 3v3.75m9-6v3.75m-3-3v3.75M9 21h6" />
             </svg>
         </a>
+        <!-- כפתור צרו קשר -->
+        <button class="absolute left-4 top-1/2 -translate-y-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors duration-200" onclick="openContactModal()">
+            צרו קשר
+        </button>
+
         <!-- מיכל לכותרת וכותרת משנה - ממורכז בנפרד -->
-        <div class="bg-gray-200 bg-opacity-70 rounded-xl shadow-lg mx-auto max-w-5xl p-4 flex flex-col items-center justify-center cursor-pointer" id="header-content-area">
+        <div class="bg-gray-200 bg-opacity-70 rounded-xl shadow-lg mx-auto max-w-2xl p-4 flex flex-col items-center justify-center cursor-pointer" id="header-content-area">
             <h1 class="text-4xl md:text-5xl font-bold mb-2 text-gray-800" id="main-title"></h1>
             <p class="text-lg md:text-xl text-gray-600" id="main-subtitle"></p>
         </div>
@@ -123,7 +128,9 @@
                 <button id="prev-post-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed" onclick="navigatePost(-1)">
                     פוסט קודם
                 </button>
-                <div id="kofi-button-container" class="hidden">
+                <!-- מיכל לכפתור Ko-fi והטקסט המותאם אישית -->
+                <div id="kofi-area-container" class="flex flex-col items-center space-y-2 hidden">
+                    <p id="kofi-custom-text" class="text-sm text-gray-600 text-center"></p>
                     <a id="kofi-button-link" target="_blank" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
                         <!-- טקסט כפתור Ko-fi ייטען ע"י JS -->
                     </a>
@@ -224,7 +231,11 @@
                         <input type="checkbox" id="admin-kofi-enabled" class="mr-2" onchange="updateKofiSettings()">
                         <label for="admin-kofi-enabled" class="text-gray-700">הצג כפתור Ko-fi בפוסטים</label>
                     </div>
-                    <div>
+                    <div class="mt-4">
+                        <label for="admin-kofi-custom-text" class="block text-gray-700 text-sm font-bold mb-2">טקסט תמיכה (מעל הכפתור):</label>
+                        <textarea id="admin-kofi-custom-text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-20" onkeyup="updateKofiSettings()"></textarea>
+                    </div>
+                    <div class="mt-4">
                         <label for="admin-kofi-text" class="block text-gray-700 text-sm font-bold mb-2">טקסט כפתור Ko-fi:</label>
                         <input type="text" id="admin-kofi-text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" onkeyup="updateKofiSettings()">
                     </div>
@@ -254,6 +265,36 @@
                     <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-xl transition-colors duration-300" onclick="saveAndDownloadSite()">שמור והורד אתר</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- מודאל צור קשר -->
+    <div id="contact-modal-overlay" class="fixed inset-0 modal-overlay flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-md text-center relative">
+            <button class="absolute top-3 left-3 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeContactModal()">
+                &times;
+            </button>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">צרו קשר</h2>
+            <form action="https://formsubmit.co/elizaidoff@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="New Contact Form Submission from Your Website">
+                <input type="hidden" name="_captcha" value="false">
+
+                <div class="mb-4">
+                    <label for="contact-name" class="block text-gray-700 text-right text-sm font-bold mb-2">שם:</label>
+                    <input type="text" id="contact-name" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="contact-email" class="block text-gray-700 text-right text-sm font-bold mb-2">אימייל:</label>
+                    <input type="email" id="contact-email" name="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-6">
+                    <label for="contact-message" class="block text-gray-700 text-right text-sm font-bold mb-2">הודעה:</label>
+                    <textarea id="contact-message" name="message" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                </div>
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 w-full">
+                    שלח הודעה
+                </button>
+            </form>
         </div>
     </div>
 
@@ -303,7 +344,8 @@
             kofi: {
                 enabled: false,
                 buttonText: 'תמכו בנו ב-Ko-fi',
-                link: 'https://ko-fi.com/yourprofile'
+                link: 'https://ko-fi.com/yourprofile',
+                customText: 'אם אהבתם את התוכן, אתם מוזמנים לתמוך בי ב-Ko-fi!' // טקסט ברירת מחדל
             }
         };
 
@@ -366,6 +408,7 @@
             // עדכן את ה-URL באמצעות Hash
             window.location.hash = pageId;
             closePostModal(); // וודא שהמודאל סגור כשמנווטים לדף ראשי
+            closeContactModal(); // וודא שמודאל צור קשר סגור
         }
 
         // פונקציה לפתיחת מודאל פוסט
@@ -390,15 +433,18 @@
             // עדכן כפתורי ניווט קודם/הבא
             updatePostNavigationButtons();
 
-            // הצג כפתור Ko-fi אם מופעל
-            const kofiContainer = document.getElementById('kofi-button-container');
+            // הצג כפתור Ko-fi וטקסט מותאם אישית אם מופעל
+            const kofiAreaContainer = document.getElementById('kofi-area-container');
+            const kofiCustomText = document.getElementById('kofi-custom-text');
             const kofiLink = document.getElementById('kofi-button-link');
+
             if (websiteData.kofi.enabled) {
                 kofiLink.href = websiteData.kofi.link;
                 kofiLink.textContent = websiteData.kofi.buttonText;
-                kofiContainer.classList.remove('hidden');
+                kofiCustomText.textContent = websiteData.kofi.customText;
+                kofiAreaContainer.classList.remove('hidden');
             } else {
-                kofiContainer.classList.add('hidden');
+                kofiAreaContainer.classList.add('hidden');
             }
 
 
@@ -553,6 +599,7 @@
             document.getElementById('admin-blog-subtitle').value = websiteData.blogPage.subtitle;
 
             document.getElementById('admin-kofi-enabled').checked = websiteData.kofi.enabled;
+            document.getElementById('admin-kofi-custom-text').value = websiteData.kofi.customText; // טען את הטקסט המותאם אישית
             document.getElementById('admin-kofi-text').value = websiteData.kofi.buttonText;
             document.getElementById('admin-kofi-link').value = websiteData.kofi.link;
 
@@ -902,6 +949,7 @@
         // --- ניהול הגדרות Ko-fi ---
         function updateKofiSettings() {
             websiteData.kofi.enabled = document.getElementById('admin-kofi-enabled').checked;
+            websiteData.kofi.customText = document.getElementById('admin-kofi-custom-text').value; // עדכן את הטקסט המותאם אישית
             websiteData.kofi.buttonText = document.getElementById('admin-kofi-text').value;
             websiteData.kofi.link = document.getElementById('admin-kofi-link').value;
         }
@@ -994,6 +1042,7 @@
             // 1. סגור את כל המודאלים ונווט לדף הבית כדי לקבל מצב נקי להורדה
             closeAdminPanel(); // וודא שפאנל הניהול סגור
             closePostModal(); // וודא שמודאל הפוסט סגור
+            closeContactModal(); // וודא שמודאל צור קשר סגור
             navigateTo('home'); // נווט לדף הבית
 
             // עדכן את כל השדות האחרונים לפני שמירה
@@ -1043,6 +1092,16 @@
 
 
         // --- אתחול וטיפול ב-Hash ---
+
+        // פונקציה לפתיחת מודאל צור קשר
+        function openContactModal() {
+            document.getElementById('contact-modal-overlay').classList.remove('hidden');
+        }
+
+        // פונקציה לסגירת מודאל צור קשר
+        function closeContactModal() {
+            document.getElementById('contact-modal-overlay').classList.add('hidden');
+        }
 
         // טען את הדף הנכון בעת טעינת העמוד או שינוי ה-hash
         function handleHashChange() {
